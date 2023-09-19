@@ -3,11 +3,24 @@ import DatePicker from "@/components/DatePicker";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { Trip } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import { error } from "console";
 
 interface TripReservationProps {
   trip: Trip;
 }
+
+interface TripReservationForm {
+  guests: number;
+  startDate: string;
+}
 const TripReservation = ({ trip }: TripReservationProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TripReservationForm>();
+  const onSubmit = (data: TripReservationForm) => {};
   return (
     <div>
       <div className="flex-fle-col px-5">
@@ -25,8 +38,16 @@ const TripReservation = ({ trip }: TripReservationProps) => {
         </div>
 
         <Input
+          {...register("guests", {
+            required: {
+              value: true,
+              message: "Número de hóspedes obrigatório.",
+            },
+          })}
           placeholder={`Número de hóspedes (max: ${trip.maxGuests})`}
           className="mt-3"
+          error={!!errors?.guests}
+          errorMessage={errors?.guests?.message}
         />
 
         <div className="flex justify-between mt-3">
@@ -37,7 +58,12 @@ const TripReservation = ({ trip }: TripReservationProps) => {
         </div>
 
         <div className="pb-10 border-b border-grayPrimary w-full">
-          <Button className="mt-3 w-full">Reservar agora</Button>
+          <Button
+            onClick={() => handleSubmit(onSubmit)()}
+            className="mt-3 w-full"
+          >
+            Reservar agora
+          </Button>
         </div>
       </div>
     </div>
